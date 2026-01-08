@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "dev": "cd my‑app && bun dev"
+  },
   "dependencies": {
     "@tanstack/react-router": "^1.144.0",
     "react": "^19.2.3",

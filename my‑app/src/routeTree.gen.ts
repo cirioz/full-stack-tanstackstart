@@ -9,12 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProtectedHandlerRouteImport } from './routes/_protected/handler'
+import { Route as ProtectedAppRouteImport } from './routes/_protected/app'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,40 +41,95 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProtectedHandlerRoute = ProtectedHandlerRouteImport.update({
+  id: '/handler',
+  path: '/handler',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAppRoute = ProtectedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/app': typeof ProtectedAppRoute
+  '/handler': typeof ProtectedHandlerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/app': typeof ProtectedAppRoute
+  '/handler': typeof ProtectedHandlerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_protected': typeof ProtectedRouteWithChildren
   '/dashboard': typeof DashboardRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/_protected/app': typeof ProtectedAppRoute
+  '/_protected/handler': typeof ProtectedHandlerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard'
+  fullPaths: '/' | '/dashboard' | '/sign-in' | '/sign-up' | '/app' | '/handler'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard'
-  id: '__root__' | '/' | '/dashboard'
+  to: '/' | '/dashboard' | '/sign-in' | '/sign-up' | '/app' | '/handler'
+  id:
+    | '__root__'
+    | '/'
+    | '/_protected'
+    | '/dashboard'
+    | '/sign-in'
+    | '/sign-up'
+    | '/_protected/app'
+    | '/_protected/handler'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProtectedRoute: typeof ProtectedRouteWithChildren
   DashboardRoute: typeof DashboardRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -65,12 +139,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_protected/handler': {
+      id: '/_protected/handler'
+      path: '/handler'
+      fullPath: '/handler'
+      preLoaderRoute: typeof ProtectedHandlerRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/app': {
+      id: '/_protected/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof ProtectedAppRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
   }
 }
 
+interface ProtectedRouteChildren {
+  ProtectedAppRoute: typeof ProtectedAppRoute
+  ProtectedHandlerRoute: typeof ProtectedHandlerRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedAppRoute: ProtectedAppRoute,
+  ProtectedHandlerRoute: ProtectedHandlerRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProtectedRoute: ProtectedRouteWithChildren,
   DashboardRoute: DashboardRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

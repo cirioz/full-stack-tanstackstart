@@ -1,73 +1,105 @@
-# React + TypeScript + Vite
+# Document Processing System — MVP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-ready web application for **immigration document processing** that connects clients with case handlers through AI-assisted workflows.
 
-Currently, two official plugins are available:
+**Timeline:** 21 days  
+**Target:** Functional MVP with core monetization and AI features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer | Technology |
+|-------|------------|
+| Frontend | Vite + React + TypeScript |
+| Routing | TanStack Router |
+| Data Fetching | TanStack Query |
+| Auth | Clerk |
+| Database | Neon (Postgres) |
+| AI | Vercel AI SDK |
+| File Storage | Azure Blob Storage / S3 |
+| Payments | Stripe |
+| Linting | Biome |
+| Deployment | Vercel |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## MVP Scope
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### In Scope (v1)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Authentication & Roles** — Clerk-based auth with `customer` | `case_handler` roles
+- **Client Dashboard** (`/app`) — Create cases, upload documents, view AI analysis, answer questions
+- **Handler Dashboard** (`/handler`) — Review cases, download documents, update status
+- **Document Processing** — Upload, extract text, AI analysis
+- **RAG v1** — Document chunking, embeddings, similarity search, source citations
+- **Tool-Calling v1** — `save_answer`, `fetch_next_question`, `fetch_case_context`, `retrieve_context`
+- **Stripe v1** — Subscription model, checkout, webhooks, entitlement gating
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Explicit Non-Goals (v2+)
+
+| Feature | Reason |
+|---------|--------|
+| Email notifications | Using in-app banners for MVP |
+| Native scheduling | External embed (Calendly/Cal.com) sufficient |
+| Advanced RAG (hybrid search, reranking) | Simple RAG first |
+| Multi-step tool chains | Basic tools first |
+| Multiple subscription tiers | Single tier for launch |
+| Mobile-native app | Responsive web sufficient |
+| Multi-language support | English only |
+| Document OCR (scanned images) | Require digital PDFs |
+
+---
+
+## Getting Started
+
+```bash
+# Install dependencies
+bun install
+
+# Run development server
+bun run dev
+
+# Format code
+bun run format
+
+# Lint & check
+bun run check
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## CI/CD Notes
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+> **CI implementation scheduled for Day 16**
+
+Planned pipeline:
+- GitHub Actions: `install → typecheck → test → biome check`
+- Vercel preview deployments for PRs
+- Production deploys on main branch merge
+- Environment isolation: dev / preview / prod
+
+---
+
+## Project Structure
+
 ```
+src/
+├── components/     # Reusable UI components
+├── db/             # Database schema & queries
+├── lib/            # Utilities (queryClient, api helpers)
+├── routes/         # TanStack Router file-based routes
+└── server/         # Server-only code (API handlers)
+```
+
+---
+
+## Environment Variables
+
+See `.env.example` for required variables.
+
+---
+
+## License
+
+Private — All rights reserved.

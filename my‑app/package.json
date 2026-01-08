@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "bun --bun vite",
     "build": "bun --bun tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "bun --bun vite preview"
+    "preview": "bun --bun vite preview",
+    "check": "biome check --write .",
+    "format": "biome format --write .",
+    "lint": "biome lint ."
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.16",
